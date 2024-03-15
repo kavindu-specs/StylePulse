@@ -14,6 +14,8 @@
 		E34EDA3F2BA4303F00EF49AC /* StylePulseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34EDA3E2BA4303F00EF49AC /* StylePulseTests.swift */; };
 		E34EDA492BA4303F00EF49AC /* StylePulseUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34EDA482BA4303F00EF49AC /* StylePulseUITests.swift */; };
 		E34EDA4B2BA4303F00EF49AC /* StylePulseUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34EDA4A2BA4303F00EF49AC /* StylePulseUITestsLaunchTests.swift */; };
+		E34EDA5B2BA430DA00EF49AC /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34EDA5A2BA430DA00EF49AC /* SplashScreen.swift */; };
+		E34EDA5E2BA430FA00EF49AC /* ApiHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34EDA5D2BA430FA00EF49AC /* ApiHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +46,8 @@
 		E34EDA442BA4303F00EF49AC /* StylePulseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StylePulseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34EDA482BA4303F00EF49AC /* StylePulseUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylePulseUITests.swift; sourceTree = "<group>"; };
 		E34EDA4A2BA4303F00EF49AC /* StylePulseUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StylePulseUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		E34EDA5A2BA430DA00EF49AC /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
+		E34EDA5D2BA430FA00EF49AC /* ApiHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +98,10 @@
 		E34EDA2C2BA4303D00EF49AC /* StylePulse */ = {
 			isa = PBXGroup;
 			children = (
+				E34EDA5C2BA430E000EF49AC /* Healpers */,
+				E34EDA592BA430A400EF49AC /* Views */,
+				E34EDA582BA4309000EF49AC /* ViewModels */,
+				E34EDA572BA4308900EF49AC /* Models */,
 				E34EDA2D2BA4303D00EF49AC /* StylePulseApp.swift */,
 				E34EDA2F2BA4303D00EF49AC /* ContentView.swift */,
 				E34EDA312BA4303F00EF49AC /* Assets.xcassets */,
@@ -125,6 +133,36 @@
 				E34EDA4A2BA4303F00EF49AC /* StylePulseUITestsLaunchTests.swift */,
 			);
 			path = StylePulseUITests;
+			sourceTree = "<group>";
+		};
+		E34EDA572BA4308900EF49AC /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E34EDA582BA4309000EF49AC /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		E34EDA592BA430A400EF49AC /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E34EDA5A2BA430DA00EF49AC /* SplashScreen.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E34EDA5C2BA430E000EF49AC /* Healpers */ = {
+			isa = PBXGroup;
+			children = (
+				E34EDA5D2BA430FA00EF49AC /* ApiHelper.swift */,
+			);
+			path = Healpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -257,6 +295,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E34EDA5E2BA430FA00EF49AC /* ApiHelper.swift in Sources */,
+				E34EDA5B2BA430DA00EF49AC /* SplashScreen.swift in Sources */,
 				E34EDA302BA4303D00EF49AC /* ContentView.swift in Sources */,
 				E34EDA2E2BA4303D00EF49AC /* StylePulseApp.swift in Sources */,
 			);
