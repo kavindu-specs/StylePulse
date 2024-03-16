@@ -8,8 +8,29 @@
 import SwiftUI
 
 struct ProductListView: View {
+    @State private var isSplash = true
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack{
+            if(isSplash){
+                SplashScreenView()
+                    .transition(.opacity)
+                    .animation(
+                        Animation.easeInOut(duration: 4),
+                        value:isSplash
+                        
+                    )
+            }else{
+                Text("Hi There")
+            }
+        }
+        .onAppear{
+            DispatchQueue.main
+                .asyncAfter(deadline: .now()+3){
+                    withAnimation{
+                        self.isSplash = false
+                    }
+                }
+        }
     }
 }
 
