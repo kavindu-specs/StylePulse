@@ -43,19 +43,16 @@ struct CartView: View {
         }
     }
     
-    //Listing Banner: view builder
+    //Listing cartHeader view builder
     @ViewBuilder func cartHeader()->some View{
         //HEADER view builder
         VStack{
             HStack{
                 
-                Image(systemName: "chevron.left")
-                    .resizable()
-                    .padding(.leading,15)
-                    .frame(width:24,height:22)
+        
                 
                 Spacer()
-                Text("My Cart")
+                Text("My Cart(4)")
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 Spacer()
                 
@@ -98,18 +95,41 @@ struct CartView: View {
                 .fill(Color.white)
                 .overlay(
                        RoundedRectangle(cornerRadius: 6)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                         .overlay{
-                            HStack(spacing:20){
-                       
+                            HStack{
                                 Image("main_banner")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
-                                    .frame(width:130,height:130)
+                                    .frame(width:110,height:110)
                                     .padding(.vertical,5)
-                                    //.offset(y:10)
                                
-                                Text("edc")
+                                VStack(alignment: .leading) {
+                                    Text("Product Name")
+                                        .font(.system(size:14))
+                                        
+                                    Text("Rs.9.99")
+                                        .font(.headline)
+                                    
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(Color.white.opacity(0.1))
+                                        .frame(width:70,height:30)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 8)
+                                             .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                             .overlay{
+                                                    HStack{
+                                                    
+                                                }
+                                             }
+                                         )
+                                  }
+                                .padding(.horizontal)
+                                Spacer()
+
+                                Image(systemName: "trash")
+                                    .foregroundColor(.red)
+                                    .padding(.trailing)
                        
                             }
                         }
@@ -118,12 +138,10 @@ struct CartView: View {
                 .frame(height:150)
                 .padding(.horizontal,10)
                 .padding(.top,20)
-                .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
-            
-       
+                .shadow(color: Color.black.opacity(0.1), radius: 3, x: 0, y: 2)
         }
-           
     }
+    
     
     //Button
     @ViewBuilder func checkoutButton()->some View{
@@ -138,10 +156,9 @@ struct CartView: View {
                         RoundedRectangle(cornerRadius: 5)
                             .fill(Color.black)
                             .frame(width:340,height:50)
-                            
                         }
             }).padding()
-    }
+      }
     
     
     //Cart Details
@@ -186,15 +203,13 @@ struct CartView: View {
                         Text("Rs.222.00")
                             .font(.system(size: 18))
                             .bold()
-                            
                     }
-                    
                 }.padding(.horizontal,15)
                     
                 )
-           
     }
     
+    //Cart Notice
     @ViewBuilder func cartNotice()->some View{
         
         RoundedRectangle(cornerRadius: 0)

@@ -14,6 +14,7 @@ struct BottomNavigationView: View {
             .fill(Color(.white))
             .shadow(color: Color.black.opacity(0.3), radius: 10, x: 0, y: 0)
             .padding(.horizontal,10)
+            
             .frame(height:55)
     }
 }

@@ -8,10 +8,16 @@
 import SwiftUI
 
 struct ProductListView: View {
-    @State private var isSplash = false
+    
+    @State private var isSplash = true
+    @State var navigate: Bool = false
+    @StateObject var productsListVM: ProductListViewModel = ProductListViewModel()
+    
     var body: some View {
         ZStack{
             if(isSplash){
+                
+                //splash screen
                 SplashScreenView()
                     .transition(.opacity)
                     .animation(
@@ -19,23 +25,26 @@ struct ProductListView: View {
                         value:isSplash
                     )
             }else{
+                
+                //listing screen
                 GeometryReader{geo in
                     let topSafeArea = geo.safeAreaInsets.top
-                    var columns = [GridItem(.adaptive(minimum:160),spacing:20)]
+                    let columns = [GridItem(.adaptive(minimum:160),spacing:20)]
                     VStack{
-                        Header(topSafeArea)
                         
+                            Header(topSafeArea).padding(.bottom, -10)
+                        topHorizontalScroller(categories:productsListVM.categories)
+                       
                         ScrollView(.vertical){
                             Rectangle()
                                 .frame(height:55)
-                               
                                 .overlay(
                                     Text("Experience our Amazing Styles..")
                                         .foregroundColor(Color.white)
                                         .bold()
                                     )
 
-                            FullScreenBanner(bannerImage: "main_banner")
+                            FullScreenBanner(banner: productsListVM.banners[0])
                             Rectangle()
                                 .frame(height:40)
                                
@@ -45,22 +54,23 @@ struct ProductListView: View {
                                         .bold()
                                     )
 
-                            HalfScreenBanners(halfBannerImage1: "", halfBannerImage2: "")
+                            HalfScreenBanners(banners:productsListVM.banners[1])
                             Rectangle()
                                 .fill(Color.gray.opacity(0.4))
                                 .frame(height:40)
                                
                                 .overlay(
                                     Text("New Arrivals")
-                                        .foregroundColor(Color.black)
+                                        .foregroundColor(Color.black.opacity(0.6))
                                         .bold()
                                         .offset(x:-120)
-                                        
                                     )
 
                             LazyVGrid(columns:columns,spacing:20){
                                 ForEach(1...6,id:\.self){ x in
-                                    ProductCardView()
+                                    ProductCardView().onTapGesture {
+                                        self.navigate=true
+                                    }
                                 }
                             }.padding(.horizontal,10)
                              .padding(.top,10)
@@ -70,7 +80,7 @@ struct ProductListView: View {
                                 .frame(height:40)
                                 .overlay(
                                     Text("More to love")
-                                        .foregroundColor(Color.black)
+                                        .foregroundColor(Color.black.opacity(0.6))
                                         .bold()
                                         .offset(x:-120)
                                         
@@ -90,9 +100,13 @@ struct ProductListView: View {
                     VStack{
                        Spacer()
                         BottomNavigationView()
+                            .padding(.bottom,7)
                         
                     }
                 }
+            }
+            NavigationLink("", isActive: $navigate){
+                CartView()
             }
         }
         .onAppear{
@@ -118,6 +132,9 @@ struct ProductListView: View {
                 Image(systemName: "cart")
                     .imageScale(.large)
                     .offset(y:-9)
+                    .onTapGesture {
+                        self.navigate  = true
+                    }
             }.padding(.horizontal,18).padding(.top,28)
             
             RoundedRectangle(cornerRadius: 8)
@@ -137,27 +154,19 @@ struct ProductListView: View {
                 }.offset(y:-10)
             
         }
-        .background(
-            ZStack {
-                RoundedRectangle(cornerRadius: 0, style: .continuous)
-                    .fill(Color.white)
-                    .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 2) // Shadow for the entire view
-                RoundedRectangle(cornerRadius: 0, style: .continuous)
-                    .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-            }
-        )
+       
         
         
     }
     
     //Listing Banner: view builder
-    @ViewBuilder func FullScreenBanner(bannerImage:String)->some View{
+    @ViewBuilder func FullScreenBanner(banner:Banner)->some View{
         RoundedRectangle(cornerRadius: 0)
             .fill(Color.white)
             .frame(height: 280)
             //.padding(.horizontal,5)
             .overlay{
-                Image("main_banner_new")
+                Image(banner.image[0] ?? "main_banner_new")
                     .resizable()
                     .scaledToFit()
                     .clipShape(RoundedRectangle(cornerRadius: 0))
@@ -166,30 +175,64 @@ struct ProductListView: View {
     }
     
     //Listing Banner: view builder
-    @ViewBuilder func HalfScreenBanners(halfBannerImage1:String,halfBannerImage2:String)->some View{
+    @ViewBuilder func HalfScreenBanners(banners:Banner)->some View{
         HStack{
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.white)
-                .frame(height: 350)
-                .padding(.horizontal,5)
-                .overlay{
-                    Image("hat_banner")
-                        .resizable()
-                        .scaledToFit()
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                }
             
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.white)
-                .frame(height: 350)
-                .padding(.horizontal,5)
-                .overlay{
-                    Image("black_friday")
-                        .resizable()
-                        .scaledToFit()
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                }
+            ForEach(banners.image, id: \.self) { image in
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.white)
+                    .frame(height: 350)
+                    .padding(.horizontal,5)
+                    .overlay{
+                        Image(image)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                
+            }
+          
         }.padding(.horizontal,12)
+        
+       
+        
+    }
+    
+    //top Scroller
+    @ViewBuilder func topHorizontalScroller(categories:[Category])->some View{
+        ScrollView(.horizontal, showsIndicators: false) {
+            
+                   HStack(spacing: 20) {
+                       ForEach(categories, id: \.id) { category in
+                           VStack {
+                               Text(category.name)
+                                   .font(.headline)
+                               Rectangle()
+                                       .frame(width: 35, height: 3) // Adjust the width and height of the stroke
+                                       .foregroundColor(Color.black)
+                           }
+                           .frame(width: 70, height: 15)
+                           .padding(.vertical,20)
+                           .onTapGesture {
+                              // <#code#>
+                           }
+                    
+                       }
+                   }
+                   .padding(.leading,15)
+                  
+        }.frame(height:50)
+            .background(Color.gray.opacity(0.3))
+            .background(
+                ZStack {
+                    RoundedRectangle(cornerRadius: 0, style: .continuous)
+                               .fill(Color.white)
+                               .shadow(color: Color.black.opacity(0.4), radius: 5, x: 0, y: 5) // Shadow for the entire view
+                           RoundedRectangle(cornerRadius: 0, style: .continuous)
+                               .stroke(Color.gray.opacity(0.1), lineWidth: 2)
+
+                }
+            )
         
     }
     
