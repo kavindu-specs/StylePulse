@@ -44,13 +44,8 @@ struct SearchHeaderView: View {
                                             .bold()
                                             .font(.system(size: 15))
                                             .foregroundColor(.black)
-                                            .offset(x:12)
-                                            
-                                        Image(systemName: "chevron.right")
-                                            .resizable()
-                                            .padding(.leading,15)
-                                            .foregroundColor(Color.white)
-                                            .frame(width:22,height:22)
+                                           
+                                      
                                     }
                                 }.padding(.horizontal,22)
                         }
