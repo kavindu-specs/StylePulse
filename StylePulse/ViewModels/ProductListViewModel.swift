@@ -5,7 +5,8 @@
 //  Created by Kavindu Prabodya on 2024-03-20.
 //
 
-import Foundation
+
+
 
 import Foundation
 import SwiftUI
@@ -17,15 +18,18 @@ class ProductListViewModel: ObservableObject {
     
     @Published var banners:[Banner] = []
     @Published var categories:[Category] = []
+    @Published var products:[Product] = []
     
     init(){
         loadbannerData()
         loadCategoryData()
+        loadProductsData()
+        //getDeviceID()
     }
     
     //laod banner data for listing page
     func loadbannerData(){
-        let urlString = "http://localhost:3000/api/v1/contents/banners"
+        let urlString = "https://style-pulse-b6aya.ondigitalocean.app/api/v1/contents/banners"
         
         guard let url = URL(string: urlString) else {return}
         let request = URLRequest(url: url)
@@ -48,7 +52,7 @@ class ProductListViewModel: ObservableObject {
     
     //load category data
     func loadCategoryData(){
-        let urlString = "http://localhost:3000/api/v1/categories"
+        let urlString = "https://style-pulse-b6aya.ondigitalocean.app/api/v1/categories"
         
         guard let url = URL(string: urlString) else {return}
         let request = URLRequest(url: url)
@@ -68,6 +72,38 @@ class ProductListViewModel: ObservableObject {
             }.store(in: &compose)
         
     }
+    
+    //load products data
+    func loadProductsData(){
+        let urlString = "https://style-pulse-b6aya.ondigitalocean.app/api/v1/products"
+        
+        guard let url = URL(string: urlString) else {return}
+        let request = URLRequest(url: url)
+        let session = URLSession(configuration: .default)
+        
+        session.dataTaskPublisher(for: request)
+            .map(\.data)
+            .retry(3)
+            .decode(type:ProductModel.self,decoder:JSONDecoder())
+            .eraseToAnyPublisher()
+            .receive(on: DispatchQueue.main)
+            .sink{ res in
+            } receiveValue: {model in
+                print(model.data)
+                guard let productsArray = model.data else{return}
+                self.products = productsArray
+            }.store(in: &compose)
+        
+    }
+    
+//    func getDeviceID() -> String {
+//        guard let deviceId = UIDevice.current.identifierForVendor?.uuidString else {
+//            return ""
+//        }
+//        UserDefaults.standard.set(deviceId, forKey: "deviceId")
+//        print(deviceId)
+//        return deviceId
+//    }
     
     //
 }

@@ -11,6 +11,12 @@ struct ProductListView: View {
     
     @State private var isSplash = true
     @State var navigate: Bool = false
+    @State private var showModal = true
+    
+    @State  var isHomeSelected:Bool = true
+    @State  var isExploreSelected:Bool = false
+    @State  var isCartSelected:Bool = false
+    
     @StateObject var productsListVM: ProductListViewModel = ProductListViewModel()
     
     var body: some View {
@@ -65,11 +71,14 @@ struct ProductListView: View {
                                         .bold()
                                         .offset(x:-120)
                                     )
-
+                            
+                            //new products
                             LazyVGrid(columns:columns,spacing:20){
-                                ForEach(1...6,id:\.self){ x in
-                                    ProductCardView().onTapGesture {
-                                        self.navigate=true
+                                ForEach(productsListVM.products,id:\.id){ product in
+                                    if product.isNewArrival == 1{
+                                        ProductCardView(relevantProduct:product).onTapGesture {
+                                            self.navigate=true
+                                        }
                                     }
                                 }
                             }.padding(.horizontal,10)
@@ -85,9 +94,15 @@ struct ProductListView: View {
                                         .offset(x:-120)
                                         
                                     )
+                            
+                            //more to love products
                             LazyVGrid(columns:columns,spacing:20){
-                                ForEach(1...6,id:\.self){ x in
-                                    ProductCardView()
+                                ForEach(productsListVM.products,id:\.id){ product in
+                                    if product.isMoreToLove == 1{
+                                        ProductCardView(relevantProduct:product).onTapGesture {
+                                            self.navigate=true
+                                        }
+                                    }
                                 }
                             }.padding(.horizontal,10)
                              .padding(.top,10)
@@ -99,12 +114,15 @@ struct ProductListView: View {
                     
                     VStack{
                        Spacer()
-                        BottomNavigationView()
+                        BottomNavigationView(isHome: isHomeSelected, isExplore: isExploreSelected, isCart: isCartSelected)
                             .padding(.bottom,7)
                         
                     }
+                   
                 }
+               
             }
+            
             NavigationLink("", isActive: $navigate){
                 CartView()
             }
@@ -207,9 +225,9 @@ struct ProductListView: View {
                            VStack {
                                Text(category.name)
                                    .font(.headline)
-                               Rectangle()
-                                       .frame(width: 35, height: 3) // Adjust the width and height of the stroke
-                                       .foregroundColor(Color.black)
+//                               Rectangle()
+//                                       .frame(width: 35, height: 3) 
+//                                       .foregroundColor(Color.black)
                            }
                            .frame(width: 70, height: 15)
                            .padding(.vertical,20)
