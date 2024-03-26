@@ -11,6 +11,8 @@ struct ProductListView: View {
     
     @State private var isSplash = true
     @State var navigate: Bool = false
+    @State var navigateToSearch: Bool = false
+    @State var navigateToCart: Bool = false
     @State private var showModal = true
     
     @State  var isHomeSelected:Bool = true
@@ -20,8 +22,9 @@ struct ProductListView: View {
     @StateObject var productsListVM: ProductListViewModel = ProductListViewModel()
     
     var body: some View {
+       
         ZStack{
-            if(isSplash){
+            if isSplash{
                 
                 //splash screen
                 SplashScreenView()
@@ -31,7 +34,7 @@ struct ProductListView: View {
                         value:isSplash
                     )
             }else{
-                
+               
                 //listing screen
                 GeometryReader{geo in
                     let topSafeArea = geo.safeAreaInsets.top
@@ -94,7 +97,7 @@ struct ProductListView: View {
                                         .offset(x:-120)
                                         
                                     )
-                            
+                            //
                             //more to love products
                             LazyVGrid(columns:columns,spacing:20){
                                 ForEach(productsListVM.products,id:\.id){ product in
@@ -124,16 +127,21 @@ struct ProductListView: View {
             }
             
             NavigationLink("", isActive: $navigate){
-                CartView()
+                if navigateToCart{
+                    
+                    CartView()
+                }else if navigateToSearch{
+                    ProductSearchResultView(products: productsListVM.productsBycategory)
+                }
             }
         }
         .onAppear{
             DispatchQueue.main
                 .asyncAfter(deadline: .now()+4){
-                    withAnimation{
+                   withAnimation{
                         self.isSplash = false
                     }
-                }
+               }
         }
     }
     
@@ -142,18 +150,18 @@ struct ProductListView: View {
         VStack{
             
             HStack{
-                Image("splashlogo")
+                Image("logo_small")
                     .resizable()
-                    .frame(width:220,height:110)
-                    .offset(x:-65)
+                    .frame(width:120,height:60)
+                    
                 Spacer()
                 Image(systemName: "cart")
                     .imageScale(.large)
-                    .offset(y:-9)
                     .onTapGesture {
-                        self.navigate  = true
+                        self.navigateToCart  = true
+                        self.navigate = true
                     }
-            }.padding(.horizontal,18).padding(.top,28)
+            }.padding(.horizontal,18).padding(.top,60).padding(.bottom,20)
             
             RoundedRectangle(cornerRadius: 8)
                 .foregroundColor(Color(.gray).opacity(0.3))
@@ -172,9 +180,6 @@ struct ProductListView: View {
                 }.offset(y:-10)
             
         }
-       
-        
-        
     }
     
     //Listing Banner: view builder
@@ -225,14 +230,15 @@ struct ProductListView: View {
                            VStack {
                                Text(category.name)
                                    .font(.headline)
-//                               Rectangle()
-//                                       .frame(width: 35, height: 3) 
-//                                       .foregroundColor(Color.black)
                            }
                            .frame(width: 70, height: 15)
                            .padding(.vertical,20)
                            .onTapGesture {
-                              // <#code#>
+                               print(category.code)
+                               productsListVM.loadProductsDataByCategory(category:category.code)
+                               self.navigateToSearch = true
+                               self.navigateToCart = false
+                               self.navigate = true
                            }
                     
                        }

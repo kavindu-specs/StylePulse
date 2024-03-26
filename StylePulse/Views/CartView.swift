@@ -8,21 +8,25 @@
 import SwiftUI
 
 struct CartView: View {
+    
+    @StateObject var cartListVM: CartViewModel = CartViewModel()
+    
     var body: some View {
         GeometryReader{geo in
             VStack{
                 
-                cartHeader()
+                cartHeader(cartDetails: cartListVM)
+                
                 ScrollView(.vertical){
-                    cartItemCard()
-                    cartItemCard()
-                    cartItemCard()
-                    cartItemCard()
-                    cartDeatails()
-                    cartNotice()
                    
-                   //checkoutButton()
+                    ForEach(cartListVM.cartData?.products ?? [],id:\.id){ product in
+                        cartItemCard(cartProductDetails: product)
+                    }
+                    
+                    cartDeatails(cartDetails: cartListVM)
+                    cartNotice()
                 }
+                
                 ZStack {
                     checkoutButton()   // Content for the bottom position
                         }
@@ -44,15 +48,13 @@ struct CartView: View {
     }
     
     //Listing cartHeader view builder
-    @ViewBuilder func cartHeader()->some View{
-        //HEADER view builder
+    @ViewBuilder func cartHeader(cartDetails:CartViewModel)->some View{
+      
         VStack{
             HStack{
-                
-        
-                
+            
                 Spacer()
-                Text("My Cart(4)")
+                Text("My Cart(\(cartDetails.cartData?.itemsCount ?? 0))")
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                 Spacer()
                 
@@ -65,9 +67,9 @@ struct CartView: View {
                     .foregroundColor(.black)
                     .padding(.leading,14)
                 Spacer()
-                Text("Rs.222.00")
+                Text("Rs.\(String(format: "%.2f", Double(cartDetails.cartData?.cartTotal ?? 0)))")
                     .fontWeight(.bold)
-                    .font(.system(size: 22))
+                    .font(.system(size: 25))
                     .font(.title)
                     .foregroundColor(Color.black.opacity(0.7))
                     .padding(.trailing,10)
@@ -88,7 +90,7 @@ struct CartView: View {
     }
     
     //Cart Items Cards
-    @ViewBuilder func cartItemCard()->some View{
+    @ViewBuilder func cartItemCard(cartProductDetails:CartProduct)->some View{
         
         ZStack(alignment:.leading){
             RoundedRectangle(cornerRadius: 6, style: .continuous)
@@ -98,17 +100,17 @@ struct CartView: View {
                         .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                         .overlay{
                             HStack{
-                                Image("main_banner")
+                                Image(cartProductDetails.productID.image)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width:110,height:110)
                                     .padding(.vertical,5)
                                
                                 VStack(alignment: .leading) {
-                                    Text("Product Name")
+                                    Text(cartProductDetails.displayName)
                                         .font(.system(size:14))
                                         
-                                    Text("Rs.9.99")
+                                    Text("Rs.\(String(format: "%.2f",Double(cartProductDetails.productID.defaultPrice)))")
                                         .font(.headline)
                                     
                                     RoundedRectangle(cornerRadius: 8)
@@ -119,7 +121,24 @@ struct CartView: View {
                                              .stroke(Color.gray.opacity(0.3), lineWidth: 1)
                                              .overlay{
                                                     HStack{
-                                                    
+                                                        Button(action: {
+                                                                           
+                                                        }) {
+                                                            Image(systemName: "minus")
+                                                                .foregroundColor(.blue)
+                                                                .font(.system(size: 15))
+                                                        }
+                                                        
+                                                        Text("\(cartProductDetails.quantity)")
+                                                            .font(.system(size:14))
+                                                        
+                                                        Button(action: {
+                                                                           
+                                                        }) {
+                                                            Image(systemName: "plus")
+                                                                .foregroundColor(.blue)
+                                                                .font(.system(size: 15))
+                                                        }
                                                 }
                                              }
                                          )
@@ -162,7 +181,7 @@ struct CartView: View {
     
     
     //Cart Details
-    @ViewBuilder func cartDeatails()->some View{
+    @ViewBuilder func cartDeatails(cartDetails:CartViewModel)->some View{
         
         RoundedRectangle(cornerRadius: 0)
             .fill(Color.gray.opacity(0.1))
@@ -174,7 +193,7 @@ struct CartView: View {
                         Text("Sub Total")
                             .font(.system(size: 15))
                         Spacer()
-                        Text("Rs.20.00")
+                        Text("Rs. \(String(format: "%.2f",Double(cartDetails.cartData?.cartSubTotal ?? 0)))")
                             .font(.system(size: 15))
                             
                     }
@@ -182,7 +201,7 @@ struct CartView: View {
                         Text("Discount")
                             .font(.system(size: 15))
                         Spacer()
-                        Text("Rs.20.00")
+                        Text("Rs. \(String(format: "%.2f",Double(cartDetails.cartData?.discountTotal ?? 0)))")
                             .font(.system(size: 15))
                             
                     }
@@ -190,7 +209,7 @@ struct CartView: View {
                         Text("Tax")
                             .font(.system(size: 15))
                         Spacer()
-                        Text("Rs.20.00")
+                        Text("Rs. \(String(format: "%.2f",Double(cartDetails.cartData?.taxTotal ?? 0)))")
                             .font(.system(size: 15))
                             
                     }
@@ -200,8 +219,8 @@ struct CartView: View {
                         Text("Cart Total")
                             .font(.system(size: 18))
                         Spacer()
-                        Text("Rs.222.00")
-                            .font(.system(size: 18))
+                        Text("Rs. \(String(format: "%.2f",Double(cartDetails.cartData?.cartTotal ?? 0)))")
+                            .font(.system(size: 25))
                             .bold()
                     }
                 }.padding(.horizontal,15)

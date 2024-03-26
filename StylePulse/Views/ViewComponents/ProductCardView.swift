@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ProductCardView: View {
+    @State var relevantProduct: Product?
+    
     var body: some View {
         ZStack(alignment:.top){
             RoundedRectangle(cornerRadius: 10)
@@ -21,7 +23,7 @@ struct ProductCardView: View {
                    
                     .frame(width:180,height:250*0.75)
                     .overlay{
-                        Image("main_banner_new")
+                        Image(relevantProduct?.image ?? "")
                             .resizable()
                             .scaledToFit()
                             .frame(height:280*0.70)
@@ -31,18 +33,19 @@ struct ProductCardView: View {
                     }.padding(.bottom,8)
                 HStack(alignment:.center){
                     
-                    Image(systemName: "star")
+                    Image(systemName: "star.fill")
                         .font(.system(size: 13))
                         .foregroundColor(.yellow)
                     
-                    Text("3.5")
+                    //Text("\(relevantProduct?.rating ?? 0)")
+                    Text(String(format: "%.1f",relevantProduct?.rating ?? 0 ))
                         .fontWeight(.regular)
                         .font(.system(size: 12))
                     
                 }.offset(x:7)
                 .padding(.bottom,1)
                 
-                Text("Red Frock-ladies dede")
+                Text(relevantProduct?.name ?? "")
                     .fontWeight(.semibold)
                     .font(.system(size: 14))
                     .padding(.bottom,1)
@@ -50,7 +53,7 @@ struct ProductCardView: View {
                 
                 HStack{
                   
-                    Text("Rs. 2000.00")
+                    Text("Rs.\(String(format: "%.2f", Double(relevantProduct?.defaultPrice ?? 0)))")
                         .fontWeight(.bold)
                         .font(.system(size: 20))
                         .foregroundColor(Color("navy_blue"))
@@ -65,5 +68,5 @@ struct ProductCardView: View {
 }
 
 #Preview {
-    ProductCardView()
+    ProductListView()
 }
