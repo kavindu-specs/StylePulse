@@ -22,10 +22,18 @@ struct Product: Codable {
     let category: String?
     let defaultPrice: Int
     let image: String?
+    let isTaxEnabled, discount: Int
+    let options: Options?
 
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case code, name, description, isNewArrival, isMoreToLove, rating, specialNote, category, defaultPrice, image
+        case code, name, description, isNewArrival, isMoreToLove, rating, specialNote, category, defaultPrice, image,isTaxEnabled, discount, options
     }
+    
+
+}
+// MARK: - Options
+struct Options: Codable {
+    let sizes, colors: [String]
 }
 
