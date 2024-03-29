@@ -10,6 +10,7 @@ import SwiftUI
 struct CartView: View {
     
     @StateObject var cartListVM: CartViewModel = CartViewModel()
+    @State private var isNavigateToMain:Bool = false
     
     var body: some View {
         GeometryReader{geo in
@@ -20,27 +21,38 @@ struct CartView: View {
                 ScrollView(.vertical){
                    
                     ForEach(cartListVM.cartData?.products ?? [],id:\.id){ product in
-                        cartItemCard(cartProductDetails: product)
+                        cartItemCard(cartProductDetails: product,cartVM:cartListVM)
+                    }
+                    
+                    if cartListVM.cartData?.itemsCount ?? 0 == 0{
+                        emptyCartNotice()
                     }
                     
                     cartDeatails(cartDetails: cartListVM)
                     cartNotice()
                 }
                 
-                ZStack {
-                    checkoutButton()   // Content for the bottom position
+              
+                    ZStack {
+                        if cartListVM.cartData?.itemsCount ?? 0 > 0{
+                            checkoutButton()
                         }
-                        .frame(width: geo.size.width, height: 100)
-                        .edgesIgnoringSafeArea(.bottom)
-                        .background(
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 0, style: .continuous)
-                                    .fill(Color.white)
-                                    .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 2)
-                                  
-                            }
-                        )
-            }
+                    }
+                    .frame(width: geo.size.width, height: 100)
+                    .edgesIgnoringSafeArea(.bottom)
+                    .background(
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 0, style: .continuous)
+                                .fill(Color.white)
+                                .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 2)
+                            
+                        }
+                    )
+                NavigationLink("", isActive: $isNavigateToMain){
+                   ProductListView().navigationBarBackButtonHidden(true)
+                 }
+                }
+           
             
             .edgesIgnoringSafeArea(.top)
             .edgesIgnoringSafeArea(.bottom)
@@ -90,7 +102,7 @@ struct CartView: View {
     }
     
     //Cart Items Cards
-    @ViewBuilder func cartItemCard(cartProductDetails:CartProduct)->some View{
+    @ViewBuilder func cartItemCard(cartProductDetails:CartProduct,cartVM:CartViewModel)->some View{
         
         ZStack(alignment:.leading){
             RoundedRectangle(cornerRadius: 6, style: .continuous)
@@ -122,18 +134,18 @@ struct CartView: View {
                                              .overlay{
                                                     HStack{
                                                         Button(action: {
-                                                                           
+                                                            cartVM.updateQuantity(varientCode: cartProductDetails.varientID, mark: "m")
                                                         }) {
                                                             Image(systemName: "minus")
                                                                 .foregroundColor(.blue)
                                                                 .font(.system(size: 15))
-                                                        }
+                                                        }.disabled(cartProductDetails.quantity == 1)
                                                         
                                                         Text("\(cartProductDetails.quantity)")
                                                             .font(.system(size:14))
                                                         
                                                         Button(action: {
-                                                                           
+                                                            cartVM.updateQuantity(varientCode: cartProductDetails.varientID, mark: "p")
                                                         }) {
                                                             Image(systemName: "plus")
                                                                 .foregroundColor(.blue)
@@ -145,10 +157,15 @@ struct CartView: View {
                                   }
                                 .padding(.horizontal)
                                 Spacer()
-
-                                Image(systemName: "trash")
-                                    .foregroundColor(.red)
-                                    .padding(.trailing)
+                                
+                                Button(action: {
+                                    cartVM.deleteProduct(varientCode:cartProductDetails.varientID)
+                                }) {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red)
+                                        .padding(.trailing)
+                                }
+                              
                        
                             }
                         }
@@ -262,6 +279,35 @@ struct CartView: View {
                 }.padding(.horizontal,15)
                     
                 )
+    }
+    
+    //empty card notice
+    @ViewBuilder func emptyCartNotice()->some View{
+        
+        VStack{
+            
+            Text("Oh! Your cart is empty")
+                .font(.system(size:24))
+                .fontWeight(.semibold)
+                .foregroundColor(Color.black.opacity(0.5))
+            Text("Add some Items to cart")
+                .font(.system(size:16))
+                .fontWeight(.medium)
+                .foregroundColor(Color.black.opacity(0.5))
+            Button(action:{
+                self.isNavigateToMain = true
+                },label:{
+                    Text("Shop Now")
+                        .foregroundStyle(.white)
+                        .fontWeight(.bold)
+                        .background{
+                            RoundedRectangle(cornerRadius: 5)
+                                .fill(Color.black)
+                                .frame(width:260,height:50)
+                            }
+                }).padding()
+        }.padding(.top,100)
+            .padding(.bottom,30)
     }
     
     

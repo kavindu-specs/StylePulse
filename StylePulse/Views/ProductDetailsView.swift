@@ -35,6 +35,9 @@ struct ProductDetailsView: View {
                 .edgesIgnoringSafeArea(.top)
                 
             }
+            NavigationLink("", isActive: $productsDetailsListVM.isAddedToCart){
+                    CartView()
+            }
         }
     }
     
@@ -43,12 +46,7 @@ struct ProductDetailsView: View {
         //HEADER view builder
         VStack{
             HStack{
-                
-                Image(systemName: "chevron.left")
-                    .resizable()
-                    .padding(.leading,15)
-                    .frame(width:24,height:22)
-                
+          
                 Spacer()
                 Text("Product Details")
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
@@ -85,7 +83,7 @@ struct ProductDetailsView: View {
                          }
                     }.padding(.horizontal,15)
                     .onTapGesture {
-                        productsDetailsListVM.addProductToCart(productId: relevantProduct?.id ?? "", size: selectedSize ?? "", color: selectedColor ?? "", displayName: relevantProduct?.name ?? "")
+                        productsDetailsListVM.addProductToCart(productId: relevantProduct?.id ?? "", displayName: relevantProduct?.name ?? "")
                      
                     }
             }
@@ -177,6 +175,7 @@ struct ProductDetailsView: View {
                                 .frame(width: 50, height: 50)
                                 .onTapGesture {
                                     selectedColor.wrappedValue = color
+                                    productsDetailsListVM.color = color
                                     print(color)
                                 }
                                 .border(selectedColor.wrappedValue == color ? Color.black.opacity(0.7) : Color.clear, width: 2)
@@ -212,6 +211,7 @@ struct ProductDetailsView: View {
                                         
                                 ).onTapGesture {
                                     selectedSize.wrappedValue = size
+                                    productsDetailsListVM.size = size
                                     print(size)
                                 }
                                 .border(selectedSize.wrappedValue == size ? Color.black.opacity(0.7) : Color.clear, width: 2) // Border color based on selection

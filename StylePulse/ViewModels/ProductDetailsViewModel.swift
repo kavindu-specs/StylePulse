@@ -13,6 +13,12 @@ class ProductDetailsViewModel:ObservableObject{
     
     var compose = Set<AnyCancellable>()
     @Published var deviceId: String = ""
+    @Published var size: String = ""
+    @Published var color: String = ""
+    @Published var displayName: String = ""
+    @Published var isAddedToCart: Bool = false
+    @Published var showError: Bool = false
+    @Published var errorMsg: String = ""
     
     init(){
         self.deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? ""
@@ -20,9 +26,9 @@ class ProductDetailsViewModel:ObservableObject{
     
     
     //load products data
-    func addProductToCart(productId:String,size:String,color:String,displayName:String){
+    func addProductToCart(productId:String,displayName:String){
         
-        let urlString = "http://localhost:3000/api/v1/cart"
+        let urlString = "https://style-pulse-b6aya.ondigitalocean.app/api/v1/cart"
 
         guard let url = URL(string: urlString) else {return}
         var request = URLRequest(url: url)
@@ -32,21 +38,22 @@ class ProductDetailsViewModel:ObservableObject{
             "username":"",
             "products":[
                 "productId":productId,
+                "varientId":"\(productId)_\(self.color)_\(self.size)",
                 "varient":[
-                    "size":size,
-                    "color":color
+                    "size":self.size,
+                    "color":self.color
                 ],
                 "quantity":1,
-                "displayName":displayName
+                "displayName":"\(displayName)- \(self.color) - \(self.size)"
             ]
         ]
-        print(requestBody)
+        
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "POST"
         request.httpBody = try? JSONSerialization.data(withJSONObject: requestBody)
         
         let session = URLSession(configuration: .default)
-        
+        print(session)
         session.dataTaskPublisher(for: request)
             .map(\.data)
             .retry(3)
@@ -54,10 +61,15 @@ class ProductDetailsViewModel:ObservableObject{
             .eraseToAnyPublisher()
             .receive(on: DispatchQueue.main)
             .sink{ res in
+                print(res)
             } receiveValue: {model in
                 print(model.status)
-                //guard let productsArray = model.data else{return}
-               // self.products = productsArray
+                self.isAddedToCart = model.status
+              
+//                if !model.status{
+//                    self.showError = true
+//                    self.errorMsg = "Product is already added."
+//                }
             }.store(in: &compose)
         
     }
