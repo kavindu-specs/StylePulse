@@ -154,7 +154,10 @@ struct ProductDetailsView: View {
             }.padding(.horizontal,15)
             Spacer()
                 Divider()
-            
+            if productsDetailsListVM.showError{
+                
+                Text(productsDetailsListVM.errorMsg).bold().font(.system(size:14)).foregroundStyle(.red).padding(.horizontal)
+            }
             //color options
             VStack{
                 

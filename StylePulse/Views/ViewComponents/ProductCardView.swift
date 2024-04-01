@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProductCardView: View {
     @State var relevantProduct: Product?
+    @State var navigateToProduct: Bool = false
     
     var body: some View {
         ZStack(alignment:.top){
@@ -62,7 +63,17 @@ struct ProductCardView: View {
                                 
             }
             Spacer()
+            NavigationLink("", isActive: $navigateToProduct){
+                    ProductDetailsView(relevantProduct: relevantProduct)
+            }
+            
+        }.onTapGesture {
+            
+            self.navigateToProduct = true
+           
+           
         }
+
      
     }
 }

@@ -10,7 +10,7 @@ import Foundation
 import Foundation
 
 // MARK: - Welcome
-struct Welcome: Codable {
+struct UserRegisterModel: Codable {
     let status: Bool
     let data: DataClass
 }

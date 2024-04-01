@@ -13,7 +13,10 @@ struct StylePulseApp: App {
         WindowGroup {
             NavigationView{
                 ProductListView()
+                    
             }
         }
     }
 }
+//9E56ED1C-6081-4EE0-8F29-42E7A6699956
+//17F5B703-F978-4188-91DE-39BA34115756

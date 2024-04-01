@@ -12,50 +12,75 @@ struct CartView: View {
     @StateObject var cartListVM: CartViewModel = CartViewModel()
     @State private var isNavigateToMain:Bool = false
     
+    @State  var isHomeSelected:Bool = false
+    @State  var isExploreSelected:Bool = false
+    @State  var isCartSelected:Bool = true
+    @State  var isProfileSelected:Bool = false
+    @State  var  showModal = false
+    @State var product:CartProduct?
+    
     var body: some View {
-        GeometryReader{geo in
-            VStack{
-                
-                cartHeader(cartDetails: cartListVM)
-                
-                ScrollView(.vertical){
-                   
-                    ForEach(cartListVM.cartData?.products ?? [],id:\.id){ product in
-                        cartItemCard(cartProductDetails: product,cartVM:cartListVM)
-                    }
+        ZStack {
+            GeometryReader{geo in
+                VStack{
                     
-                    if cartListVM.cartData?.itemsCount ?? 0 == 0{
-                        emptyCartNotice()
-                    }
+                    cartHeader(cartDetails: cartListVM)
                     
-                    cartDeatails(cartDetails: cartListVM)
-                    cartNotice()
-                }
-                
-              
-                    ZStack {
-                        if cartListVM.cartData?.itemsCount ?? 0 > 0{
-                            checkoutButton()
-                        }
-                    }
-                    .frame(width: geo.size.width, height: 100)
-                    .edgesIgnoringSafeArea(.bottom)
-                    .background(
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 0, style: .continuous)
-                                .fill(Color.white)
-                                .shadow(color: Color.black.opacity(0.3), radius: 5, x: 0, y: 2)
+                    ScrollView(.vertical){
+                        if cartListVM.showSuccess {
+                       
+                                Text(cartListVM.successMsg)
+                                    .foregroundColor(Color.black)
+                                    .font(.system(size:15))
+                                    .bold()
+                                    .animation(.easeInOut(duration: 1))
+                                    .transition(.opacity)
+                                    .onAppear {
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                            withAnimation{
+                                                cartListVM.showSuccess = false
+                                            }
+                                        }
+                                    }
                             
+                           
                         }
-                    )
-                NavigationLink("", isActive: $isNavigateToMain){
-                   ProductListView().navigationBarBackButtonHidden(true)
-                 }
-                }
-           
+                        
+                        ForEach(cartListVM.cartData?.products ?? [],id:\.id){ product in
+                            cartItemCard(cartProductDetails: product,cartVM:cartListVM)
+                        }
+                        
+                        if !cartListVM.isLoadCart &&  cartListVM.cartData?.itemsCount ?? 0 == 0 {
+                            emptyCartNotice()
+                        }
+                        
+                        cartDeatails(cartDetails: cartListVM)
+                        cartNotice()
+                        checkoutButton().padding(.bottom,70)
+                    }
+                    
+                    NavigationLink("", isActive: $isNavigateToMain){
+                        ProductListView(isSplash:false).navigationBarBackButtonHidden(true)
+                     }
+                    }.edgesIgnoringSafeArea(.top)
+                
+            }
             
-            .edgesIgnoringSafeArea(.top)
-            .edgesIgnoringSafeArea(.bottom)
+            VStack{
+                Spacer()
+                BottomNavigationView(isHome: isHomeSelected, isExplore: isExploreSelected, isCart: isCartSelected,isProfile: isProfileSelected)
+            }
+            
+            VStack{
+                Spacer()
+                Spacer()
+                CartProductEditView(isShowing: $showModal,products:product,cartVM:cartListVM)
+                    .transition(.move(edge:.bottom ))
+                    .animation(
+                        Animation.easeInOut(duration: 0.2)
+                        )
+            } .edgesIgnoringSafeArea(.bottom)
+            
         }
     }
     
@@ -64,11 +89,13 @@ struct CartView: View {
       
         VStack{
             HStack{
-            
+           
                 Spacer()
                 Text("My Cart(\(cartDetails.cartData?.itemsCount ?? 0))")
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                    
                 Spacer()
+               
                 
             }.padding(.bottom,18)
 
@@ -121,39 +148,61 @@ struct CartView: View {
                                 VStack(alignment: .leading) {
                                     Text(cartProductDetails.displayName)
                                         .font(.system(size:14))
+                                    HStack{
+                                        RoundedRectangle(cornerRadius: 6)
+                                            .fill(Color(cartProductDetails.varient.color))
+                                            .frame(width: 12, height: 12)
+                                        Text("Size - \(cartProductDetails.varient.size)")
+                                            .font(.system(size:12))
+                                            .bold()
+                                            .padding(.horizontal,7)
+                                       
+                                    }
                                         
                                     Text("Rs.\(String(format: "%.2f",Double(cartProductDetails.productID.defaultPrice)))")
                                         .font(.headline)
                                     
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color.white.opacity(0.1))
-                                        .frame(width:70,height:30)
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 8)
-                                             .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                                             .overlay{
-                                                    HStack{
-                                                        Button(action: {
-                                                            cartVM.updateQuantity(varientCode: cartProductDetails.varientID, mark: "m")
-                                                        }) {
-                                                            Image(systemName: "minus")
-                                                                .foregroundColor(.blue)
-                                                                .font(.system(size: 15))
-                                                        }.disabled(cartProductDetails.quantity == 1)
-                                                        
-                                                        Text("\(cartProductDetails.quantity)")
-                                                            .font(.system(size:14))
-                                                        
-                                                        Button(action: {
-                                                            cartVM.updateQuantity(varientCode: cartProductDetails.varientID, mark: "p")
-                                                        }) {
-                                                            Image(systemName: "plus")
-                                                                .foregroundColor(.blue)
-                                                                .font(.system(size: 15))
-                                                        }
-                                                }
-                                             }
-                                         )
+                                    HStack {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(Color.white.opacity(0.1))
+                                            .frame(width:70,height:30)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 8)
+                                                 .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                                                 .overlay{
+                                                        HStack{
+                                                            Button(action: {
+                                                                cartVM.updateQuantity(varientCode: cartProductDetails.varientID, mark: "m")
+                                                            }) {
+                                                                Image(systemName: "minus")
+                                                                    .foregroundColor(.blue)
+                                                                    .font(.system(size: 15))
+                                                            }.disabled(cartProductDetails.quantity == 1)
+                                                            
+                                                            Text("\(cartProductDetails.quantity)")
+                                                                .font(.system(size:14))
+                                                            
+                                                            Button(action: {
+                                                                cartVM.updateQuantity(varientCode: cartProductDetails.varientID, mark: "p")
+                                                            }) {
+                                                                Image(systemName: "plus")
+                                                                    .foregroundColor(.blue)
+                                                                    .font(.system(size: 15))
+                                                            }
+                                                    }
+                                                 }
+                                             
+                                        )
+                                        Image(systemName: "pencil")
+                                                       .resizable()
+                                                       .frame(width: 18, height: 18)
+                                                       .foregroundColor(.blue)
+                                                       .padding(.horizontal,8)
+                                                       .onTapGesture {
+                                                           self.showModal = true
+                                                           self.product = cartProductDetails
+                                                   }
+                                    }
                                   }
                                 .padding(.horizontal)
                                 Spacer()
@@ -166,10 +215,8 @@ struct CartView: View {
                                         .padding(.trailing)
                                 }
                               
-                       
                             }
                         }
-                       
                    )
                 .frame(height:150)
                 .padding(.horizontal,10)

@@ -9,18 +9,20 @@ import SwiftUI
 
 struct ProductListView: View {
     
-    @State private var isSplash = true
+    @State var isSplash = true
     @State var navigate: Bool = false
     @State var navigateToSearch: Bool = false
     @State var navigateToCart: Bool = false
+    @State var navigateToProduct: Bool = false
     @State private var showModal = true
     
     @State  var isHomeSelected:Bool = true
     @State  var isExploreSelected:Bool = false
     @State  var isCartSelected:Bool = false
+    @State  var isProfileSelected:Bool = false
     
-    @StateObject var productsListVM: ProductListViewModel = ProductListViewModel()
-    
+    @StateObject  var productsListVM: ProductListViewModel = ProductListViewModel()
+
     var body: some View {
        
         ZStack{
@@ -53,7 +55,7 @@ struct ProductListView: View {
                                         .bold()
                                     )
 
-                            FullScreenBanner(banner: productsListVM.banners[0])
+                            FullScreenBanner(banner: productsListVM.banners?.image1 ?? "")
                             Rectangle()
                                 .frame(height:40)
                                
@@ -63,7 +65,7 @@ struct ProductListView: View {
                                         .bold()
                                     )
 
-                            HalfScreenBanners(banners:productsListVM.banners[1])
+                            HalfScreenBanners(banner1:productsListVM.banners?.image2 ?? "",banner2:productsListVM.banners?.image3 ?? "")
                             Rectangle()
                                 .fill(Color.gray.opacity(0.4))
                                 .frame(height:40)
@@ -79,9 +81,7 @@ struct ProductListView: View {
                             LazyVGrid(columns:columns,spacing:20){
                                 ForEach(productsListVM.products,id:\.id){ product in
                                     if product.isNewArrival == 1{
-                                        ProductCardView(relevantProduct:product).onTapGesture {
-                                            self.navigate=true
-                                        }
+                                        ProductCardView(relevantProduct:product)
                                     }
                                 }
                             }.padding(.horizontal,10)
@@ -103,7 +103,11 @@ struct ProductListView: View {
                                 ForEach(productsListVM.products,id:\.id){ product in
                                     if product.isMoreToLove == 1{
                                         ProductCardView(relevantProduct:product).onTapGesture {
-                                            self.navigate=true
+                                            self.navigate = true
+                                            self.navigateToProduct = true
+                                            self.navigateToSearch = false
+                                            self.navigateToCart = false
+                                           
                                         }
                                     }
                                 }
@@ -117,7 +121,7 @@ struct ProductListView: View {
                     
                     VStack{
                        Spacer()
-                        BottomNavigationView(isHome: isHomeSelected, isExplore: isExploreSelected, isCart: isCartSelected)
+                        BottomNavigationView(isHome: isHomeSelected, isExplore: isExploreSelected, isCart: isCartSelected,isProfile: isProfileSelected)
                             .padding(.bottom,7)
                         
                     }
@@ -131,13 +135,18 @@ struct ProductListView: View {
                     
                     CartView()
                 }else if navigateToSearch{
-                    ProductSearchResultView(products: productsListVM.productsBycategory)
+                    
+                    ProductSearchResultView(products:productsListVM.productsSearchResults,searchQuery:productsListVM.searchQuery)
+                        .navigationBarBackButtonHidden(true)
+               
+                }else if navigateToProduct{
+                    ProductDetailsView()
                 }
             }
         }
         .onAppear{
             DispatchQueue.main
-                .asyncAfter(deadline: .now()+4){
+                .asyncAfter(deadline: .now()+3){
                    withAnimation{
                         self.isSplash = false
                     }
@@ -169,27 +178,36 @@ struct ProductListView: View {
                 .padding(.horizontal,20)
                 .overlay{
                     HStack{
-                        TextField("Search Products",text:.constant(""))
+                        TextField("Search Products",text: $productsListVM.searchQuery)
                             .offset(x:28)
-                        Image(systemName:"magnifyingglass")
-                            .imageScale(.large)
-                            .foregroundColor(Color(.gray).opacity(0.4))
-                            .offset(x:-35)
+                        
+                        Button(action: {
+                           productsListVM.searchProductsByquery()
+                            self.navigate = true
+                            self.navigateToSearch = true
+                            self.navigateToCart  = false
+                            
+                        }) {
+                            Image(systemName:"magnifyingglass")
+                                .imageScale(.large)
+                                .foregroundColor(Color(.gray).opacity(0.4))
+                                .padding(.trailing,35)
+                                
+                        }
                     }
-                    
                 }.offset(y:-10)
             
         }
     }
     
     //Listing Banner: view builder
-    @ViewBuilder func FullScreenBanner(banner:Banner)->some View{
+    @ViewBuilder func FullScreenBanner(banner:String)->some View{
         RoundedRectangle(cornerRadius: 0)
             .fill(Color.white)
             .frame(height: 280)
             //.padding(.horizontal,5)
             .overlay{
-                Image(banner.image[0] ?? "main_banner_new")
+                Image(banner)
                     .resizable()
                     .scaledToFit()
                     .clipShape(RoundedRectangle(cornerRadius: 0))
@@ -198,23 +216,33 @@ struct ProductListView: View {
     }
     
     //Listing Banner: view builder
-    @ViewBuilder func HalfScreenBanners(banners:Banner)->some View{
+    @ViewBuilder func HalfScreenBanners(banner1:String,banner2:String)->some View{
         HStack{
-            
-            ForEach(banners.image, id: \.self) { image in
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(Color.white)
-                    .frame(height: 350)
-                    .padding(.horizontal,5)
-                    .overlay{
-                        Image(image)
-                            .resizable()
-                            .scaledToFit()
-                            .clipShape(RoundedRectangle(cornerRadius: 10))
-                    }
-                
-            }
-          
+//
+//            ForEach(banners.image, id: \.self) { image in
+//               
+//                
+//            }
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.white)
+                .frame(height: 350)
+                .padding(.horizontal,5)
+                .overlay{
+                    Image(banner1)
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.white)
+                .frame(height: 350)
+                .padding(.horizontal,5)
+                .overlay{
+                    Image(banner2)
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
         }.padding(.horizontal,12)
         
        
@@ -235,7 +263,7 @@ struct ProductListView: View {
                            .padding(.vertical,20)
                            .onTapGesture {
                                print(category.code)
-                               productsListVM.loadProductsDataByCategory(category:category.code)
+                               productsListVM.loadProductsDataByCategory(category:category.code,categoryName:category.name)
                                self.navigateToSearch = true
                                self.navigateToCart = false
                                self.navigate = true

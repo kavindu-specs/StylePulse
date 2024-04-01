@@ -17,10 +17,11 @@ class ProductListViewModel: ObservableObject {
     var compose = Set<AnyCancellable>()
     
     @Published var products:[Product] = []
-    @Published var productsBycategory:[Product] = []
-    @Published var banners:[Banner] = []
+    @Published var productsSearchResults:[Product] = []
+    @Published var banners:Banner?
     @Published var categories:[Category] = []
-   
+    @Published var searchQuery: String = ""
+
     
     init(){
         print("calling")
@@ -48,8 +49,8 @@ class ProductListViewModel: ObservableObject {
             .sink{ res in
             } receiveValue: {model in
                 print(model.data)
-                guard let bannersArray = model.data else{return}
-                self.banners = bannersArray
+                //guard let bannersArray = model.data else{return}
+                self.banners = model.data
             }.store(in: &compose)
         
     }
@@ -73,6 +74,7 @@ class ProductListViewModel: ObservableObject {
                 print(model.data)
                 guard let categoriesArray = model.data else{return}
                 self.categories = categoriesArray
+               
             }.store(in: &compose)
         
     }
@@ -101,7 +103,7 @@ class ProductListViewModel: ObservableObject {
     }
     
     //load products data
-    func loadProductsDataByCategory(category:String){
+    func loadProductsDataByCategory(category:String,categoryName:String){
         
         let urlString = "https://style-pulse-b6aya.ondigitalocean.app/api/v1/products?category=\(category)"
         print(urlString)
@@ -119,8 +121,21 @@ class ProductListViewModel: ObservableObject {
             } receiveValue: {model in
                 print(model.data)
                 guard let productsArray = model.data else{return}
-                self.productsBycategory = productsArray
+                self.productsSearchResults = productsArray
+                self.searchQuery = categoryName
             }.store(in: &compose)
+        
+    }
+    
+    //load products data
+    func searchProductsByquery(){
+        
+
+        let filteredProducts = products.filter { product in
+            return product.name!.lowercased().contains(self.searchQuery.lowercased())
+        }
+
+        self.productsSearchResults = filteredProducts
         
     }
     
@@ -129,7 +144,8 @@ class ProductListViewModel: ObservableObject {
             return ""
         }
         UserDefaults.standard.set(deviceId, forKey: "deviceId")
-        print(deviceId)
+        print(UserDefaults.standard.value(forKey: "userName"))
+       print(deviceId)
         return deviceId
     }
     

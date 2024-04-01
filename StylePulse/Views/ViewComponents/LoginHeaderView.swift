@@ -8,23 +8,39 @@
 import SwiftUI
 
 struct LoginHeaderView: View {
+    var title: String = ""
+    @State private var navigate: Bool = false
     var body: some View {
         VStack{
           
             HStack{
                 
-                
-      
-                Text("Login")
+                Text(title)
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                     .font(.system(size:25))
                     .foregroundColor(Color.white)
                 Spacer()
+                HStack{
+                    Text("Skip")
+                        .fontWeight(.semibold)
+                        .font(.system(size:15))
+                        
+                        .foregroundColor(Color.white)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size:15))
+                        .foregroundColor(.white)
+                        .padding(.leading,2)
+                }.onTapGesture {
+                    self.navigate = true
+                }
                 
             }.padding(.bottom,10)
                 .padding(.top,20)
                 .padding(.horizontal,20)
-
+            
+            NavigationLink("", isActive: $navigate){
+                   ProductListView(isSplash: false).navigationBarBackButtonHidden(true)
+            }
         
           }
             .padding(.top,60)

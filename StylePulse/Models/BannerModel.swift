@@ -10,17 +10,17 @@ import Foundation
 // MARK: - Welcome
 struct BannerModel: Codable {
     let status: Bool
-    let data: [Banner]?
+    let data: Banner?
 }
 
 // MARK: - Datum
 struct Banner: Codable {
     let id, name, description, type: String
-    let image: [String]
+    let image1, image2, image3: String
 
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case name, description, type, image
+        case name, description, type, image1, image2, image3
     }
 }
 

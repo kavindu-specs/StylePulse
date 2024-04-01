@@ -11,6 +11,13 @@ struct BottomNavigationView: View {
       var isHome: Bool
       var isExplore: Bool
       var isCart: Bool
+      var isProfile: Bool
+    
+    @State var isNavigateToCart: Bool = false
+    @State var isNavigateToLogin: Bool = false
+    @State var isNavigateToMain: Bool = false
+    @State var isNavigate: Bool = false
+    @State var isMenu: Bool = false
     
     var body: some View {
         Spacer()
@@ -23,51 +30,116 @@ struct BottomNavigationView: View {
             .overlay{
                 HStack{
                     
-                    VStack {
                         if isHome{
-                            Image(systemName: "house.fill")
-                                .foregroundColor(Color("navy_blue"))
-                                .font(.system(size: 22))
-                            Text("Home")
-                                .bold()
-                                .font(.system(size: 14))
-                                .foregroundColor(Color("navy_blue"))
+                            VStack {
+                                Image(systemName: "house.fill")
+                                    .foregroundColor(Color("navy_blue"))
+                                    .font(.system(size: 22))
+                                Text("Home")
+                                    .bold()
+                                    .font(.system(size: 14))
+                                    .foregroundColor(Color("navy_blue"))
+                            }
                         }else{
-                            Image(systemName: "house.fill")
-                                .foregroundColor(.black)
-                                .font(.system(size: 22))
-                            Text("Home")
-                                .bold()
-                                .font(.system(size: 14))
+                            VStack{
+                                Image(systemName: "house.fill")
+                                    .foregroundColor(.black)
+                                    .font(.system(size: 22))
+                                Text("Home")
+                                    .bold()
+                                    .font(.system(size: 14))
+                            }.onTapGesture {
+                                self.isNavigate  = true
+                                self.isNavigateToCart  = false
+                                self.isNavigateToLogin = false
+                                self.isNavigateToMain = true
+                            }
                         }
                        
-                     
-                    }
+                    
+                   
                     Spacer()
                     VStack {
-                        if isExplore{
+                        
+                        if isProfile{
                             
-                            Image(systemName: "magnifyingglass")
-                                   .font(.system(size: 22))
-                                   .foregroundColor(Color("navy_blue"))
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 22))
+                                .foregroundColor(Color("navy_blue"))
                             
-                            Text("Explore")
+                            Text("Account")
                                 .bold()
                                 .font(.system(size: 14))
                                 .foregroundColor(Color("navy_blue"))
                             
                         }else{
-                            
-                            Image(systemName: "magnifyingglass")
-                                       .foregroundColor(.black)
-                                   .font(.system(size: 22))
-                            Text("Explore")
-                                .bold()
-                                .font(.system(size: 14))
-                            
+                            if let userName = UserDefaults.standard.value(forKey: "userName") as? String {
+                                
+                                if !userName.isEmpty {
+                                    
+                                    Menu{
+                                        Button(action: {
+                                            UserDefaults.standard.setValue("",forKey: "userName")
+                                            self.isNavigate  = true
+                                            self.isNavigateToCart  = false
+                                            self.isNavigateToLogin = true
+                                            self.isNavigateToMain = false
+                                        }) {
+                                           Text("Logout")
+                                                .bold()
+                                            
+                                        }
+                                    }label:{
+                                        VStack{
+                                            Image(systemName: "person.fill")
+                                                .foregroundColor(.black)
+                                                .font(.system(size: 22))
+                                            Text("Account")
+                                                .bold()
+                                                .font(.system(size: 14))
+                                                .foregroundColor(Color(.black))
+                                        }
+                                    }
+                                
+                                } else {
+                                    VStack{
+                                        Image(systemName: "person.fill")
+                                            .font(.system(size: 22))
+                                            .foregroundColor(Color(.black))
+                                        
+                                        Text("Account")
+                                            .bold()
+                                            .font(.system(size: 14))
+                                            .foregroundColor(Color(.black))
+                                    }.onTapGesture {
+                                        self.isNavigate  = true
+                                        self.isNavigateToCart  = false
+                                        self.isNavigateToLogin = true
+                                        self.isNavigateToMain = false
+                                    }
+                                    
+                                }
+                            } else {
+                                VStack{
+                                    Image(systemName: "person.fill")
+                                        .font(.system(size: 22))
+                                        .foregroundColor(Color(.black))
+                                    
+                                    Text("Account")
+                                        .bold()
+                                        .font(.system(size: 14))
+                                        .foregroundColor(Color(.black))
+                                }.onTapGesture {
+                                        self.isNavigate  = true
+                                        self.isNavigateToCart  = false
+                                        self.isNavigateToLogin = true
+                                       self.isNavigateToMain = false
+                                    }
+                                
+                            }
+                           
                         }
                         
-                     
                     }
                     Spacer()
                     VStack {
@@ -95,9 +167,26 @@ struct BottomNavigationView: View {
                         }
                         
                       
+                    }.onTapGesture {
+                        self.isNavigate  = true
+                        self.isNavigateToCart  = true
+                        self.isNavigateToLogin = false
+                        self.isNavigateToMain = false
                     }
                 }.padding(.horizontal,45)
             }
+        
+        //navigation
+        NavigationLink("", isActive: $isNavigate){
+            if isNavigateToCart{
+                CartView()
+            }else if isNavigateToLogin{
+                LoginView().navigationBarBackButtonHidden(true)
+            }else if isNavigateToMain{
+                ProductListView().navigationBarBackButtonHidden(true)
+            }
+            
+        }
     }
 }
 

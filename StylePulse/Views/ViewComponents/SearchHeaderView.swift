@@ -8,14 +8,20 @@
 import SwiftUI
 
 struct SearchHeaderView: View {
+    @State var navigate: Bool = false
     var body: some View {
         VStack{
             HStack{
-                
-                Image(systemName: "chevron.left")
-                    .resizable()
-                    .padding(.leading,15)
-                    .frame(width:24,height:22)
+                HStack{
+                    Image(systemName: "chevron.left")
+                        .resizable()
+                        .padding(.leading,15)
+                        .frame(width:24,height:22)
+                    Text("Home")
+                        .fontWeight(.regular)
+                }.onTapGesture {
+                    self.navigate = true
+                }
                 
                 Spacer()
                 Text("Explore Products")
@@ -23,41 +29,15 @@ struct SearchHeaderView: View {
                 Spacer()
                 
             }.padding(.bottom,18)
-
-            HStack(){
-                //seach bar
-                RoundedRectangle(cornerRadius: 8)
-                    .foregroundColor(Color(.gray).opacity(0.3))
-                    .frame(height:35)
-                    .padding(.horizontal,20)
-                    .overlay{
-                        HStack{
-                            TextField("Search Products",text:.constant(""))
-                                .offset(x:28)
-                            
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .fill(.white)
-                                .frame(width:80,height:30)
-                                .overlay{
-                                    HStack{
-                                        Text("Search")
-                                            .bold()
-                                            .font(.system(size: 15))
-                                            .foregroundColor(.black)
-                                           
-                                      
-                                    }
-                                }.padding(.horizontal,22)
-                        }
-                        
-                    }
-                
-                //cancel button
-               Text("Cancel")
-                    .bold()
-                    .foregroundColor(.red)
-                    .padding(.trailing,12)
+             
+            NavigationLink("", isActive: $navigate){
+               
+                ProductListView(isSplash: false)
+                    .navigationBarBackButtonHidden(true)
+               
+          
             }
+        
           }
             .padding(.top,60)
             .padding(.bottom,5)

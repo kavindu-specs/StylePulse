@@ -32,12 +32,14 @@ struct CartData: Codable {
 // MARK: - Product
 struct CartProduct: Codable {
     let productID: ProductID
+    let varientID: String
     let varient: Varient
     let quantity: Int
     let displayName, id: String
 
     enum CodingKeys: String, CodingKey {
         case productID = "productId"
+        case varientID = "varientId"
         case varient, quantity, displayName
         case id = "_id"
     }
@@ -52,12 +54,19 @@ struct ProductID: Codable {
     let specialNote, image: String
     let isTaxEnabled, discount: Int
     let category: String?
+    let options: ProductOptions
 
     enum CodingKeys: String, CodingKey {
         case id = "_id"
-        case code, name, description, isNewArrival, isMoreToLove, rating, defaultPrice, specialNote, image, isTaxEnabled, discount, category
+        case code, name, description, isNewArrival, isMoreToLove, rating, defaultPrice, specialNote, image, isTaxEnabled, discount, category,options
     }
 }
+
+// MARK: - Options
+struct ProductOptions: Codable {
+    let sizes, colors: [String]
+}
+
 
 // MARK: - Varient
 struct Varient: Codable {
