@@ -66,7 +66,7 @@ class RegisterViewModel:ObservableObject{
                     
                     self.success = model.status
                     if !model.status {
-                        print("wcd")
+                        UserDefaults.standard.setValue("",forKey: "userName")
                         self.showError = true
                         self.errorMessage = "Invalid username"
                     }else{

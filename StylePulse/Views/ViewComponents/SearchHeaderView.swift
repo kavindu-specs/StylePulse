@@ -26,6 +26,7 @@ struct SearchHeaderView: View {
                 Spacer()
                 Text("Explore Products")
                     .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                    .offset(x:-30)
                 Spacer()
                 
             }.padding(.bottom,18)

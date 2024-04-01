@@ -61,6 +61,11 @@ class UserLoginViewModel:ObservableObject{
                 
                 if self.isUserVerified {
                     UserDefaults.standard.setValue(self.userName,forKey: "userName")
+                }else{
+                    UserDefaults.standard.setValue("",forKey: "userName")
+                    self.showError = true
+                    self.errorMessage = "Invalid credentials"
+                    
                 }
             }.store(in: &compose)
     }

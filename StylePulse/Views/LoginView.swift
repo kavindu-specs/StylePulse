@@ -9,10 +9,11 @@ import SwiftUI
 
 struct LoginView: View {
     @State var navigateToregister: Bool = false
+    var title: String = "Welcome Back"
     @StateObject var loginVM: UserLoginViewModel = UserLoginViewModel()
     var body: some View {
         VStack{
-            LoginHeaderView()
+            LoginHeaderView(title: "Login")
            
            Spacer()
             Image("logo_small")
@@ -20,8 +21,8 @@ struct LoginView: View {
                 .frame(width:180,height:80)
             Spacer()
             HStack{
-                Text("Welcome Back")
-                    .font(.title)
+                Text(title)
+                    .font(.system(size:23))
                     .fontWeight(.bold)
                 Spacer()
             }.padding(.horizontal,15)

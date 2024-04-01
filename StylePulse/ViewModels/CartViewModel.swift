@@ -142,7 +142,7 @@ class CartViewModel:ObservableObject{
     func updateVarient(varientCode:String,productId:String){
         
         print(self.deviceId)
-        let urlString = "http://localhost:3000/api/v1/cart/varient"
+        let urlString = "https://style-pulse-b6aya.ondigitalocean.app/api/v1/cart/varient"
         print(urlString)
         guard let url = URL(string: urlString) else {return}
         var request = URLRequest(url: url)
