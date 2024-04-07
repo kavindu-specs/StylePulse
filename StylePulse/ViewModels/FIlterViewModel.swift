@@ -13,6 +13,7 @@ class FilterViewModel: ObservableObject{
     
     //@Published var products:[Product] = []
     @Published var productsFilterResults:[Product] = []
+    @Published var allProducts:[Product] = []
     @Published var lowPrice: String = "0"
     @Published var highPrice: String = "0"
     var compose = Set<AnyCancellable>()
@@ -23,8 +24,10 @@ class FilterViewModel: ObservableObject{
     
     //load products data
     func filterProducts(lowestFirst:Bool,mostRated:Bool,products:[Product]){
-        
-        var resultProductsBySort: [Product] = []
+     
+        allProducts = products
+        var resultProductsBySort: [Product] = products
+       
         if mostRated{
             resultProductsBySort = products.sorted { (product1, product2) -> Bool in
                 
@@ -45,8 +48,7 @@ class FilterViewModel: ObservableObject{
             }
             
         }
-        print(lowPrice)
-        print(Double(lowPrice) ?? 0)
+      
         if Double(lowPrice) ?? 0 > 0 || Double(highPrice) ?? 0  > 0 {
             
            resultProductsBySort = resultProductsBySort.filter { product in

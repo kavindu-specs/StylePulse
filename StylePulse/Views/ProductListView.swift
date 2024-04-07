@@ -136,7 +136,7 @@ struct ProductListView: View {
                     CartView()
                 }else if navigateToSearch{
                     
-                    ProductSearchResultView(products:productsListVM.productsSearchResults,searchQuery:productsListVM.searchQuery)
+                    ProductSearchResultView(products:productsListVM.productsSearchResults,allProducts:productsListVM.productsSearchResults,searchQuery:productsListVM.searchQuery)
                         .navigationBarBackButtonHidden(true)
                
                 }else if navigateToProduct{

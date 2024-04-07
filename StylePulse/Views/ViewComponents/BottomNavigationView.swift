@@ -183,7 +183,7 @@ struct BottomNavigationView: View {
             }else if isNavigateToLogin{
                 LoginView().navigationBarBackButtonHidden(true)
             }else if isNavigateToMain{
-                ProductListView().navigationBarBackButtonHidden(true)
+                ProductListView(isSplash:false).navigationBarBackButtonHidden(true)
             }
             
         }

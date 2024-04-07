@@ -46,7 +46,7 @@ class CartViewModel:ObservableObject{
         self.isLoadCart = true
        
         let urlString = "https://style-pulse-b6aya.ondigitalocean.app/api/v1/cart?deviceId=\(self.deviceId)"
-        print(urlString)
+
         guard let url = URL(string: urlString) else {return}
         let request = URLRequest(url: url)
         let session = URLSession(configuration: .default)
@@ -61,7 +61,7 @@ class CartViewModel:ObservableObject{
                 //print(res)
                 self.isLoadCart = false
             } receiveValue: {model in
-                print(model.data)
+
                 guard let cartDataReponse = model.data else{return}
                 self.cartData = cartDataReponse
             }.store(in: &compose)
@@ -70,9 +70,9 @@ class CartViewModel:ObservableObject{
     
     //delete cart details
     func deleteProduct(varientCode:String){
-        print(self.deviceId)
+
         let urlString = "https://style-pulse-b6aya.ondigitalocean.app/api/v1/cart/\(self.deviceId)/\(varientCode)"
-        print(urlString)
+
         guard let url = URL(string: urlString) else {return}
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
@@ -86,15 +86,11 @@ class CartViewModel:ObservableObject{
             .eraseToAnyPublisher()
             .receive(on: DispatchQueue.main)
             .sink{ res in
-                print(res)
             } receiveValue: {model in
-                print(model.status)
-                if model.data == nil {
-                    
-                }
-                guard let cartDataReponse = model.data else{return}
-               
+            
+                let cartDataReponse = model.data
                 self.cartData = cartDataReponse
+
             }.store(in: &compose)
         
     }
@@ -104,7 +100,7 @@ class CartViewModel:ObservableObject{
         
         print(self.deviceId)
         let urlString = "https://style-pulse-b6aya.ondigitalocean.app/api/v1/cart"
-        print(urlString)
+
         guard let url = URL(string: urlString) else {return}
         var request = URLRequest(url: url)
         let requestBody:[String:Any] = [
@@ -143,7 +139,7 @@ class CartViewModel:ObservableObject{
         
         print(self.deviceId)
         let urlString = "https://style-pulse-b6aya.ondigitalocean.app/api/v1/cart/varient"
-        print(urlString)
+
         guard let url = URL(string: urlString) else {return}
         var request = URLRequest(url: url)
         let requestBody:[String:Any] = [
@@ -153,7 +149,7 @@ class CartViewModel:ObservableObject{
             "size":self.size,
             "color":self.color
         ]
-        print(requestBody)
+
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpMethod = "PUT"
         request.httpBody = try? JSONSerialization.data(withJSONObject: requestBody)
@@ -167,7 +163,6 @@ class CartViewModel:ObservableObject{
             .eraseToAnyPublisher()
             .receive(on: DispatchQueue.main)
             .sink{ res in
-                print(res)
             } receiveValue: {model in
                 print(model.status)
                 if model.status  {

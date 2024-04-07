@@ -10,6 +10,7 @@ import SwiftUI
 struct ProductSearchResultView: View {
     
     var products: [Product] = []
+    var allProducts: [Product] = []
     var searchQuery: String = ""
     
     @State private var showModal = false
@@ -54,7 +55,7 @@ struct ProductSearchResultView: View {
                         Divider()
                         
                         LazyVGrid(columns:columns,spacing:20){
-                            ForEach(products ??  [],id:\.id){ product in
+                            ForEach(products ,id:\.id){ product in
                                 
                                    ProductCardView(relevantProduct:product)
 
@@ -67,7 +68,7 @@ struct ProductSearchResultView: View {
                         Spacer()
                     }
                 }
-                FilterModalView(products:products,searchQuery:searchQuery,isShowing: $showModal)
+                FilterModalView(products:allProducts,searchQuery:searchQuery,isShowing: $showModal)
                     .transition(.move(edge:.bottom ))
                     .animation(
                         Animation.easeInOut(duration: 0.2)

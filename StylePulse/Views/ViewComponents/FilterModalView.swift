@@ -167,7 +167,7 @@ struct FilterModalView: View {
                 }
                 NavigationLink("", isActive: $navigate){
                    
-                    ProductSearchResultView(products:filterVM.productsFilterResults,searchQuery:searchQuery)
+                    ProductSearchResultView(products:filterVM.productsFilterResults,allProducts:filterVM.allProducts,searchQuery:searchQuery)
                         .navigationBarBackButtonHidden(true)
                    
               

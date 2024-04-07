@@ -48,7 +48,7 @@ class ProductListViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink{ res in
             } receiveValue: {model in
-                print(model.data)
+ 
                 //guard let bannersArray = model.data else{return}
                 self.banners = model.data
             }.store(in: &compose)
@@ -71,7 +71,7 @@ class ProductListViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink{ res in
             } receiveValue: {model in
-                print(model.data)
+
                 guard let categoriesArray = model.data else{return}
                 self.categories = categoriesArray
                
@@ -106,7 +106,7 @@ class ProductListViewModel: ObservableObject {
     func loadProductsDataByCategory(category:String,categoryName:String){
         
         let urlString = "https://style-pulse-b6aya.ondigitalocean.app/api/v1/products?category=\(category)"
-        print(urlString)
+
         guard let url = URL(string: urlString) else {return}
         let request = URLRequest(url: url)
         let session = URLSession(configuration: .default)
@@ -119,11 +119,17 @@ class ProductListViewModel: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink{ res in
             } receiveValue: {model in
-                print(model.data)
+
                 guard let productsArray = model.data else{return}
                 self.productsSearchResults = productsArray
                 self.searchQuery = categoryName
             }.store(in: &compose)
+        
+        let filteredProducts = products.filter { product in
+            return product.name!.lowercased().contains(self.searchQuery.lowercased())
+        }
+
+        self.productsSearchResults = filteredProducts
         
     }
     
@@ -144,8 +150,7 @@ class ProductListViewModel: ObservableObject {
             return ""
         }
         UserDefaults.standard.set(deviceId, forKey: "deviceId")
-        print(UserDefaults.standard.value(forKey: "userName"))
-       print(deviceId)
+    
         return deviceId
     }
     

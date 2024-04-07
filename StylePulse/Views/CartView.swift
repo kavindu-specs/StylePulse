@@ -42,15 +42,14 @@ struct CartView: View {
                                             }
                                         }
                                     }
-                            
-                           
                         }
                         
                         ForEach(cartListVM.cartData?.products ?? [],id:\.id){ product in
                             cartItemCard(cartProductDetails: product,cartVM:cartListVM)
                         }
                         
-                        if !cartListVM.isLoadCart &&  cartListVM.cartData?.itemsCount ?? 0 == 0 {
+                        if !cartListVM.isLoadCart &&  cartListVM.cartData?.itemsCount ?? 0 == 0{
+                            
                             emptyCartNotice()
                         }
                         
