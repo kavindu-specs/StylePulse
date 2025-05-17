@@ -1,6 +1,6 @@
 # 📱 StylePulse iOS Application
 
-A simple and modern iOS application developed for a clothing brand. StylePule allows users to browse clothing items, explore categories, view product options, and add items to a cart — all within a clean, intuitive interface. The app includes a basic authentication flow and follows a client-server architecture, communicating with a backend API.
+A simple and modern iOS application developed for a clothing brand. StylePulse allows users to browse clothing items, explore categories, view product options, and add items to a cart — all within a clean, intuitive interface. The app includes a basic authentication flow and follows a client-server architecture, communicating with a backend API.
 
 ---
 
